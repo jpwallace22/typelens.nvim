@@ -1,0 +1,70 @@
+=============================================================================
+TYPELENS PLUGIN
+                                                                      *typelens*
+
+A Neovim plugin for TypeScript type checking directly within your editor.
+
+==============================================================================
+COMMANDS                                                      *typelens-commands*
+
+:TypeLens                Runs TypeScript type checking and displays results
+                        Opens either Trouble or Quickfix window based on config
+
+==============================================================================
+DEFAULT KEYMAPS                                              *typelens-keymaps*
+
+<leader>ck              Run TypeScript type checking
+
+Keymaps can be customized in your configuration (see |typelens-setup|)
+
+==============================================================================
+SETUP                                                          *typelens-setup*
+
+TypeLens can be configured through lazy.nvim:
+
+>
+    {
+      "jpwallace22/typelens",
+      dependencies = {
+        "folke/trouble.nvim",  -- optional but recommended
+      },
+      opts = {
+        display_output = "trouble",  -- or "quickfix"
+        typescript_path = "npx tsc",
+        auto_open = true,
+        keys = {
+          check_types = "<leader>ck",
+        },
+      }
+    }
+<
+
+------------------------------------------------------------------------------
+OPTIONS                                                      *typelens-options*
+
+display_output        string (default: "trouble")
+                     Where to display type checking results
+                     Values: "trouble" or "quickfix"
+
+typescript_path      string (default: "npx tsc")
+                     Command to run TypeScript compiler
+
+auto_open           boolean (default: true)
+                     Automatically open output window when errors are found
+
+keys.check_types    string (default: "<leader>ck")
+                     Keymap to trigger type checking
+
+==============================================================================
+TROUBLESHOOTING                                        *typelens-troubleshooting*
+
+If TypeScript errors are not showing:
+1. Ensure typescript is installed in your project
+   npm install --save-dev typescript
+
+2. Check if your tsconfig.json is properly configured
+
+3. Try :checkhealth typelens to verify plugin setup
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

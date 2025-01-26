@@ -58,14 +58,14 @@ end
 
 ---Display findings in appropriate window
 ---@param findings ErrorInfo[] List of findings
-local function display_findings(findings)
-	local config = require("typelens.config")
+---@param config TypeLensConfig
+local function display_findings(findings, config)
 	vim.schedule(function()
 		vim.fn.setqflist(findings)
 		if #findings > 0 then
-			if config.values.display_output == "trouble" and pcall(require, "trouble") then
+			if config.display_output == "trouble" and pcall(require, "trouble") then
 				require("trouble").open("quickfix")
-			elseif config.values.auto_open then
+			elseif config.auto_open then
 				vim.cmd("copen")
 			end
 		end
@@ -74,20 +74,17 @@ end
 
 ---Run TypeScript type checking
 function M.check_types()
+	local config = require("typelens.config").values
 	local temp_file = vim.fn.tempname()
 	local cwd = vim.fn.getcwd()
-	vim.system({
-		"npx",
-		"tsc",
-		"--noEmit",
-	}, {
+	vim.system(config.tsc_command, {
 		cwd = cwd,
 		text = true,
 		stdout = utils.create_output_handler(temp_file),
 		stderr = utils.create_output_handler(temp_file),
 	}, function()
 		local findings = utils.process_temp_file(temp_file, handle_compiler_output)
-		display_findings(findings)
+		display_findings(findings, config)
 	end)
 end
 

@@ -40,7 +40,11 @@ TypeLens comes with sensible defaults but can be customized to your needs:
   opts = {
     display_output = "trouble", 
     auto_open = true,          
-    typescript_path = "npx tsc",
+    tsc_command = {
+      "npx",
+      "tsc",
+      "--noEmit",
+	  },
     keys = {
       check_types = "<leader>ck",
     },
@@ -53,7 +57,7 @@ TypeLens comes with sensible defaults but can be customized to your needs:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `display_output` | string | `"trouble"` | Where to display errors. Options: `"trouble"` or `"quickfix"` |
-| `typescript_path` | string | `"npx tsc"` | Command to run TypeScript compiler |
+| `tsc_command` | table | `"npx tsc --noEmit"` | Command to run TypeScript compiler |
 | `auto_open` | boolean | `true` | Automatically open output window when errors are found |
 | `keys.check_types` | string | `"<leader>ck"` | Keymap to trigger type checking |
 

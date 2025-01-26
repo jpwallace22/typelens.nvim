@@ -2,7 +2,7 @@
 
 ---@class TypeLensConfig
 ---@field display_output? DisplayOutput Display output type, either "trouble" or "quickfix"
----@field typescript_path? string Path to TypeScript compiler
+---@field tsc_command? table Path to TypeScript compiler
 ---@field auto_open? boolean Automatically open quickfix window
 ---@field keys? {check_types: string} Optional key mappings
 
@@ -13,7 +13,11 @@ local M = {}
 ---@type TypeLensConfig
 M.values = {
 	display_output = "trouble",
-	typescript_path = "npx tsc",
+	tsc_command = {
+		"npx",
+		"tsc",
+		"--noEmit",
+	},
 	auto_open = true,
 	keys = {
 		check_types = "<leader>ck",
@@ -39,13 +43,10 @@ function M.validate_config(config)
 		end
 	end
 
-	-- Validate typescript_path
-	if config.typescript_path ~= nil then
-		if type(config.typescript_path) ~= "string" then
-			return false, "typescript_path must be a string"
-		end
-		if config.typescript_path:gsub("%s", "") == "" then
-			return false, "typescript_path cannot be empty"
+	-- Validate tsc_command
+	if config.tsc_command ~= nil then
+		if type(config.tsc_command) ~= "table" then
+			return false, "tsc_command must be a table"
 		end
 	end
 

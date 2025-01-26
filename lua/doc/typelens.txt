@@ -30,7 +30,11 @@ TypeLens can be configured through lazy.nvim:
       },
       opts = {
         display_output = "trouble",  -- or "quickfix"
-        typescript_path = "npx tsc",
+        tsc_command = {
+          "npx",
+          "tsc",
+          "--noEmit",
+	},
         auto_open = true,
         keys = {
           check_types = "<leader>ck",
@@ -46,7 +50,7 @@ display_output        string (default: "trouble")
                      Where to display type checking results
                      Values: "trouble" or "quickfix"
 
-typescript_path      string (default: "npx tsc")
+tsc_command          table (default: "npx tsc --noEmit")
                      Command to run TypeScript compiler
 
 auto_open           boolean (default: true)

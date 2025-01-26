@@ -23,8 +23,10 @@ local M = {}
 ---Parse TypeScript error output line
 ---@param line string Error line from TypeScript compiler
 ---@return ErrorInfo|nil Parsed error information
-local function parse_error_line(line)
-	local filepath, lnum, col, err_text = line:match("([^%(]+)%((%d+),(%d+)%): (.+)")
+function M.parse_error_line(line)
+	-- Look for the last set of parentheses containing digits and a comma
+	-- This helps us distinguish between parentheses in the path and the line/column parentheses
+	local filepath, lnum, col, err_text = line:match("(.-)%((%d+),(%d+)%): (.+)")
 	if filepath and lnum and col and err_text then
 		return {
 			filename = filepath,
@@ -42,8 +44,8 @@ end
 ---@param current_error ErrorInfo|nil Current error being processed
 ---@param line string Current line being processed
 ---@return ErrorInfo[], ErrorInfo|nil Updated findings and current error
-local function handle_compiler_output(findings, current_error, line)
-	local error_info = parse_error_line(line)
+function M.handle_compiler_output(findings, current_error, line)
+	local error_info = M.parse_error_line(line)
 	if error_info then
 		if current_error then
 			table.insert(findings, current_error)
@@ -59,7 +61,7 @@ end
 ---Display findings in appropriate window
 ---@param findings ErrorInfo[] List of findings
 ---@param config TypeLensConfig
-local function display_findings(findings, config)
+function M.display_findings(findings, config)
 	vim.schedule(function()
 		vim.fn.setqflist(findings)
 		if #findings > 0 then
@@ -83,8 +85,8 @@ function M.check_types()
 		stdout = utils.create_output_handler(temp_file),
 		stderr = utils.create_output_handler(temp_file),
 	}, function()
-		local findings = utils.process_temp_file(temp_file, handle_compiler_output)
-		display_findings(findings, config)
+		local findings = utils.process_temp_file(temp_file, M.handle_compiler_output)
+		M.display_findings(findings, config)
 	end)
 end
 

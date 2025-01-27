@@ -16,6 +16,7 @@
 ---@field auto_open boolean Whether to automatically open the output window
 
 local utils = require("typelens.utils")
+local loader = require("typelens.loader")
 
 ---@class TypescriptModule
 local M = {}
@@ -66,7 +67,11 @@ function M.display_findings(findings, config)
 		vim.fn.setqflist(findings)
 		if #findings > 0 then
 			if config.display_output == "trouble" and pcall(require, "trouble") then
-				require("trouble").open("quickfix")
+				require("trouble").open({
+					mode = "quickfix",
+					auto_jump = true,
+					focus = true,
+				})
 			elseif config.auto_open then
 				vim.cmd("copen")
 			end
@@ -76,6 +81,7 @@ end
 
 ---Run TypeScript type checking
 function M.check_types()
+	loader:start()
 	local config = require("typelens.config").values
 	local temp_file = vim.fn.tempname()
 	local cwd = vim.fn.getcwd()
@@ -87,6 +93,7 @@ function M.check_types()
 	}, function()
 		local findings = utils.process_temp_file(temp_file, M.handle_compiler_output)
 		M.display_findings(findings, config)
+		loader:stop()
 	end)
 end
 
